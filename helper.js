@@ -1,4 +1,4 @@
-const dbHandler = require('./storage/dbhandler.js');
+const dbHandler = require('./storage/dbhandler');
 
 var handleCommand = async function(target, context, msg, tokens) {
     return new Promise( async function(resolve, reject ) {
@@ -50,31 +50,6 @@ var userExists = async function(id) {
     return profile[0];
 };
 
-var logMessage = async function(profile, msg){
-    await dbHandler.insert('messages', 'user_id, contents', `'${profile.twitch_id}', '${msg}'`)
-        .then(function (value) {
-
-        }).catch( (err) => {
-            console.log(err);
-        });
-
-    let balance = null;
-
-    await dbHandler.get('balance', 'users', `twitch_id = ${profile.twitch_id}`)
-        .then(function(value) {
-            balance = parseInt(value[0].balance);
-        }).catch( (err) => {
-            console.log(err);
-        });
-
-    await dbHandler.update('balance', 'users', balance+5, `twitch_id = ${profile.twitch_id}`)
-        .then(function(value) {
-
-        }).catch( (err) => {
-            console.log(err);
-        });
-};
-
 var validSwitchCode = function(code) {
     code = code.split("-");
 
@@ -91,13 +66,52 @@ var uniqueSwitchCode = async function(code) {
         .then( (value) => {
             if(value.length > 0)
                 response = false;
+        }).catch( (err) => {
+            console.error(err);
         });
 
     return response;
 }
 
+var addGame = async function(game) {
+    let exists = await gameExists(game['store_id']);
+
+    if(!exists) {
+        await dbHandler.insert('games', 'store_id, type, title, url, msrp',
+            `'${game['store_id']}', '${game.type}', '${game.title}', '${game.url}', '${game.msrp}'`)
+            .then( (value) => {
+                return value;
+            }).catch( (err) => {
+                console.error(err);
+            });
+    } else {
+        return false;
+    }
+}
+var gameExists = async function(store_id) {
+    let exists = false;
+    let game = await dbHandler.get('*', 'games', `store_id = '${store_id}'`)
+        .then((value) => {
+            if(value.length === 1)
+                exists = true;
+        }).catch( (err) => {
+            console.error(err);
+        });
+
+    return exists;
+}
+
+var grammarOwner = function(name) {
+    if(name.charAt(name.length-1) === "s")
+        return name+"'"
+    else
+        return name+"'s";
+}
+
 module.exports.handleCommand = handleCommand;
 module.exports.userExists = userExists;
-module.exports.logMessage = logMessage;
 module.exports.validSwitchCode = validSwitchCode;
 module.exports.uniqueSwitchCode = uniqueSwitchCode;
+module.exports.addGame = addGame;
+module.exports.gameExists = gameExists;
+module.exports.grammerOwner = grammarOwner;
