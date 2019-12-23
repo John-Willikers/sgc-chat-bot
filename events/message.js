@@ -1,5 +1,5 @@
 const messages = require('../config/bot-text');
-const helper = require('../helper.js');
+const helper = require('../helper');
 const settings = require('../config/settings');
 
 module.exports = async (client, message) => {
@@ -7,11 +7,13 @@ module.exports = async (client, message) => {
 
     let profile = await helper.userExists(message.member.user.id);
 
-    // if(profile['switch_code'] === null) {
-    //     message.delete();
-    //     message.author.sendMessage(messages['no-switch']);
-    //     return;
-    // }
+    if(!settings.development) {
+        if(profile['switch_code'] === null) {
+            message.delete();
+            message.author.sendMessage(messages['no-switch']);
+            return;
+        }
+    }
 
     if(message.content.indexOf(settings.prefix) === 0) {
         const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
