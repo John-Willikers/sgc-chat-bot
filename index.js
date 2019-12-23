@@ -1,9 +1,24 @@
 const Discord = require("discord.js");
 const fs = require('fs');
 const Enmap = require('enmap');
-
+const helper = require('./helper');
+const { getGamesAmerica, getGamesEurope, getGamesJapan } = require('nintendo-switch-eshop');
 const client = new Discord.Client();
 const settings = require('./config/settings');
+
+getGamesAmerica()
+    .then( async (value) => {
+        await value.forEach( game => {
+            helper.addGame({
+                "store_id": game.nsuid,
+                type: game.type,
+                title: game.title.replace(/'/g, "\\'"),
+                url: game.url,
+                msrp: game.msrp
+            });
+        });
+        console.log(`America Library Count: ${value.length}`);
+    });
 
 fs.readdir('./events', (err, files) => {
     if(err) return console.error(err);
