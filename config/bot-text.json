@@ -1,5 +1,6 @@
 {
   "no-switch": "I seem to have noticed that you do not have a Nintendo Switch code associated with your account. \nPlease make sure to visit the #intro channel and use \n```!profile -sw SW-0001-0002-0003``` Please make sure use your code and not the one listed above.\n",
   "invalid-switch": "You did not supply a Valid Switch Code. Please make sure it follow the format of SW-1000-2000-3000",
-  "welcome": "Welcome to the Switch Gaming Crew. Please take a moment to set your switch code with the command ```^profile -sw=SW-1000-2000-3000```\n This will allow you to Talk on our server and gain access to add games to your library.\n Once your ready to add games to your library please use the ^game -help command."
+  "welcome": "Welcome to the Switch Gaming Crew. Please take a moment to set your switch code with the command ```^profile -sw=SW-1000-2000-3000```\n This will allow you to Talk on our server and gain access to add games to your library.\n Once your ready to add games to your library please use the ^game -help command.",
+  "game-exists": "This game is already associated with your profile."
 }
