@@ -5,6 +5,8 @@ const settings = require('../config/settings');
 module.exports = async (client, message) => {
     if(message.author.bot) return;
 
+    console.log(message.author);
+
     let profile = await helper.userExists(message.member.user.id);
 
     if(!settings.development) {

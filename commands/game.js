@@ -7,7 +7,7 @@ exports.run = async (client, profile, message, args) => {
 
     args.forEach( async arg => {
         arg = arg.split('=');
-        if(arg.length !== 2) message.author.send(`${args[0]} is missing its value. Please follow it with = [value]`);
+        if(arg.length !== 2) message.author.send(`${arg[0]} is missing its value. Please use it as ${[0]}=<value>`);
 
         switch(arg[0]) {
             case "-search":

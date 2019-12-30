@@ -5,7 +5,17 @@ const helper = require('./helper');
 const { getGamesAmerica, getGamesEurope, getGamesJapan } = require('nintendo-switch-eshop');
 const client = new Discord.Client();
 const settings = require('./config/settings');
+const countries = require('./config/countries');
 
+client.commands = new Enmap();
+client.countries = new Enmap();
+
+// Setup our internal Countries
+for(let a=0; a<countries.length; a++) {
+    client.countries.set(countries[a]['name'].toLowerCase(), countries[a].code);
+}
+
+// Grab Games from NA Library
 getGamesAmerica()
     .then( async (value) => {
         await value.forEach( game => {
@@ -20,6 +30,7 @@ getGamesAmerica()
         console.log(`America Library Count: ${value.length}`);
     });
 
+// Register Events
 fs.readdir('./events', (err, files) => {
     if(err) return console.error(err);
 
@@ -38,8 +49,7 @@ fs.readdir('./events', (err, files) => {
     })
 });
 
-client.commands = new Enmap();
-
+// Register Commands
 fs.readdir("./commands/", (err, files) => {
     if(err) return console.error(err);
 
@@ -56,4 +66,5 @@ fs.readdir("./commands/", (err, files) => {
     });
 })
 
+// Log our Bot in
 client.login(settings.secret);

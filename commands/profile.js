@@ -16,7 +16,7 @@ exports.run = async (client, profile, message, args) => {
     } else {
         args.forEach( async arg => {
             arg = arg.split('=');
-            if(arg.length !== 2) message.author.send(`${args[0]} is missing its value. Please follow it with = [value]`);
+            if(arg.length !== 2 && arg[0] !== '-agree') message.author.send(`${arg[0]} is missing its value. Please use it as ${[0]}=<value>`);
 
             switch(arg[0]) {
                 case "-sw":
@@ -36,7 +36,16 @@ exports.run = async (client, profile, message, args) => {
                     } else {
                         message.author.send(messages['invalid-switch']);
                     }
-                break;
+                    break;
+
+                case "-agree":
+                    dbHandler.update('agreed', 'users', '1', `id = '${profile.id}'`)
+                        .then( (value) => {
+                            message.author.send(`Thanks for agreeing to the Rules ${message.author.username}`);
+                        }).catch( (err) => {
+                        console.error(err);
+                    });
+                    break;
             }
         });
     }
