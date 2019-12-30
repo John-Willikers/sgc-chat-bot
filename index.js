@@ -1,14 +1,19 @@
+// Yarn Modules
 const Discord = require("discord.js");
+const schedule = require('node-schedule');
 const fs = require('fs');
 const Enmap = require('enmap');
-const helper = require('./helper');
 const { getGamesAmerica, getGamesEurope, getGamesJapan } = require('nintendo-switch-eshop');
+
+// Project Imports
+const helper = require('./helper');
 const client = new Discord.Client();
 const settings = require('./config/settings');
 const countries = require('./config/countries');
 
 client.commands = new Enmap();
 client.countries = new Enmap();
+client.services = new Enmap();
 
 // Setup our internal Countries
 for(let a=0; a<countries.length; a++) {
@@ -64,7 +69,25 @@ fs.readdir("./commands/", (err, files) => {
         console.log(`Attempting to load command ${commandName}`);
         client.commands.set(commandName, props);
     });
-})
+});
+
+// Register Services
+fs.readdir("./services/", (err, files) => {
+    if(err) return console.error(err);
+
+    console.log(`\nAttempting to Load ${files.length} services`);
+
+    files.forEach(file => {
+        if(!file.endsWith(".js")) return;
+
+        let props = require(`./services/${file}`);
+        let serviceName = file.split(".")[0];
+
+        console.log(`Attempting to load service ${serviceName} running (${props.cron})`);
+
+        client.services.set(serviceName, schedule.scheduleJob(props.cron, props.service));
+    });
+});
 
 // Log our Bot in
 client.login(settings.secret);
