@@ -15,7 +15,10 @@ exports.cron = '0 0 */3 * *';
 //Every Minute Cron count, used for debugging
 exports.cron = '* * * * *';
 
-exports.service = async (client) => {
+exports.service = async (client ) => {
+    //let client = process.env.CLIENTBOY;
+    let channel = client.channels.get('181448919530602497');
+
     // Grab all the Profiles from our Userlist that are active.
     let profiles = await dbHandler.get('*', 'users', `status = '1'`);
     let flagged = [];

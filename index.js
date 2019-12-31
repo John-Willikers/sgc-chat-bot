@@ -71,10 +71,13 @@ fs.readdir("./commands/", (err, files) => {
     });
 });
 
+// Log our Bot in
+client.login(settings.secret);
+
 // Register Services
 fs.readdir("./services/", (err, files) => {
     if(err) return console.error(err);
-
+    
     console.log(`\nAttempting to Load ${files.length} services`);
 
     files.forEach(file => {
@@ -85,9 +88,11 @@ fs.readdir("./services/", (err, files) => {
 
         console.log(`Attempting to load service ${serviceName} running (${props.cron})`);
 
-        client.services.set(serviceName, schedule.scheduleJob(props.cron, props.service));
+        client.services.set(serviceName,
+            schedule.scheduleJob(
+                props.cron,
+                props.service.bind(null, client)
+            )
+        );
     });
 });
-
-// Log our Bot in
-client.login(settings.secret);
